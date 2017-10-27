@@ -1,9 +1,15 @@
 package servlets;
 
-import businesslogic.UserService;
-import domainmodel.User;
+import businesslogic.NoteService;
+import domainmodel.Note;
+
 import java.io.IOException;
+import static java.lang.Integer.parseInt;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -17,25 +23,26 @@ public class UserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        UserService us = new UserService();
+        NoteService us = new NoteService();
         String action = request.getParameter("action");
         if (action != null && action.equals("view")) {
-            String selectedUsername = request.getParameter("selectedUsername");
+            String selectedNoteString = request.getParameter("selectedNote");
+            int selectedNote = parseInt(selectedNoteString);
             try {
-                User user = us.get(selectedUsername);
-                request.setAttribute("selectedUser", user);
+                Note note = us.get(selectedNote);
+                request.setAttribute("selectedNote", note);
             } catch (Exception ex) {
                 Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
-        ArrayList<User> users = null;        
+        ArrayList<Note> notes = null;        
         try {
-            users = (ArrayList<User>) us.getAll();
+            notes = (ArrayList<Note>) us.getAll();
         } catch (Exception ex) {
             Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-        request.setAttribute("users", users);
+        request.setAttribute("notes", notes);
         getServletContext().getRequestDispatcher("/WEB-INF/users.jsp").forward(request, response);
     }
 
@@ -44,35 +51,37 @@ public class UserServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        String email = request.getParameter("email");
-        String firstname = request.getParameter("firstname");
-        String lastname = request.getParameter("lastname");
-        int active = request.getParameter("active") != null ? 1 : 0;
+        String datecreated = request.getParameter("datecreated");
+        String contents = request.getParameter("contents");
+        String noteid = request.getParameter("noteid");
+        int noteidint = parseInt(noteid);
+        Date date = new Date();
 
-        UserService us = new UserService();
+        NoteService us = new NoteService();
 
         try {
             if (action.equals("delete")) {
-                String selectedUsername = request.getParameter("selectedUsername");
-                us.delete(selectedUsername);
+                String selectedNoteString = request.getParameter("selectedNote");
+                int selectedNote = parseInt(selectedNoteString);
+                us.delete(selectedNote);
             } else if (action.equals("edit")) {
-                us.update(username, password, email, active, firstname, lastname);
+                
+                us.update(noteidint, new Date(), contents);
             } else if (action.equals("add")) {
-                us.insert(username, password, email, active, firstname, lastname);
+                
+                us.insert(0, new Date(), contents);
             }
         } catch (Exception ex) {
             request.setAttribute("errorMessage", "Whoops.  Could not perform that action.");
         }
         
-        ArrayList<User> users = null;
+        ArrayList<Note> notes = null;
         try {
-            users = (ArrayList<User>) us.getAll();
+            notes = (ArrayList<Note>) us.getAll();
         } catch (Exception ex) {
             Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-        request.setAttribute("users", users);
+        request.setAttribute("notes", notes);
         getServletContext().getRequestDispatcher("/WEB-INF/users.jsp").forward(request, response);
     }
 }
