@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -36,9 +37,9 @@ public class UserServlet extends HttpServlet {
             }
         }
         
-        ArrayList<Note> notes = null;        
+        List<Note> notes = null;        
         try {
-            notes = (ArrayList<Note>) us.getAll();
+            notes = us.getAll();
         } catch (Exception ex) {
             Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -54,7 +55,10 @@ public class UserServlet extends HttpServlet {
         String datecreated = request.getParameter("datecreated");
         String contents = request.getParameter("contents");
         String noteid = request.getParameter("noteid");
-        int noteidint = parseInt(noteid);
+        int noteidint = 0;
+        if(noteid != null){
+        noteidint = parseInt(noteid);
+        }
         Date date = new Date();
 
         NoteService us = new NoteService();
@@ -75,9 +79,9 @@ public class UserServlet extends HttpServlet {
             request.setAttribute("errorMessage", "Whoops.  Could not perform that action.");
         }
         
-        ArrayList<Note> notes = null;
+        List<Note> notes = null;
         try {
-            notes = (ArrayList<Note>) us.getAll();
+            notes = us.getAll();
         } catch (Exception ex) {
             Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
         }

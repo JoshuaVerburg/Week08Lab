@@ -22,7 +22,10 @@ public class NoteService {
     }
 
     public int update(int noteid, Date dateCreated, String contents) throws Exception {
-        Note note = new Note(noteid, dateCreated, contents);
+        Note note = userDB.getNote(noteid);
+        note.setDateCreated(dateCreated);
+        note.setContents(contents);
+
         return userDB.update(note);
     }
 

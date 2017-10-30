@@ -13,4 +13,4 @@ CREATE TABLE Notes(
     PRIMARY KEY (noteID)
 );
 
---INSERT INTO User values('admin', 'password', 'test@test.com', 1, 'Bob', 'Bobberson');
+INSERT INTO `Notes` (`DateCreated`, `Contents`) VALUES (NOW(), 'Sample note 1');
